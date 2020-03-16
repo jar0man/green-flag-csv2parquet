@@ -41,8 +41,9 @@ with the command line parameter --logger_location
      python3 -m main.csv2parquet 
 
 ### Parameters available
-Parameters [default values]:
-        + csv_location: file or folder for our csv files  [./input-data/]
+Parameters [default values]
+
+        + csv_location: file or folder for our csv files  [./input-data/]                
         + output_location: location for our output file in parquet  [./output.parquet]
         + logger_location: location where the log will be created in [./log/]
         + output_mode: writer mode [overwrite]
