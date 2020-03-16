@@ -23,22 +23,34 @@ Assumptions:
 ### Installing
 To make it run, please clone the git and then do the following steps:
 1. create an virtual environment running:
+```
     python3 -m venv ./venv
+```
 2. activate the virtual environment
+```
     . venv/bin/activate
-3. install requirements
+```
+3. install requirements 
+```
     pip3 install -r requirements.txt
+```
 4. run unit tests 
+```
     pytest
+```
     
 ### Running the application    
 1. in order to run the application, you need to setup the parameters or run
 with the default values. The log, by default will be saved into the folder ./log,
 so, you need to create this folder or specify a new folder, which exists already,
 with the command line parameter --logger_location 
+```    
      mkdir ./log
+```
 2. run the application
-     python3 -m main.csv2parquet 
+```
+     python3 -m main.csv2parquet
+```
 
 ### Parameters available
 Parameters [default values]
