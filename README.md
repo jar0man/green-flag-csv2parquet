@@ -19,3 +19,32 @@ Assumptions:
   + Schema is fixed, all the csv files will have the same schema, so, we don't 
   need to infer the schema, which will improve performance and reduce prone errors
   + We are running a spark cluster for our data pipeline
+  
+### Installing
+To make it run, please clone the git and then do the following steps:
+1. create an virtual environment running:
+    python3 -m venv ./venv
+2. activate the virtual environment
+    . venv/bin/activate
+3. install requirements
+    pip3 install -r requirements.txt
+4. run unit tests 
+    pytest
+    
+### Running the application    
+1. in order to run the application, you need to setup the parameters or run
+with the default values. The log, by default will be saved into the folder ./log,
+so, you need to create this folder or specify a new folder, which exists already,
+with the command line parameter --logger_location 
+     mkdir ./log
+2. run the application
+     python3 -m main.csv2parquet 
+
+### Parameters available
+Parameters [default values]:
+        + csv_location: file or folder for our csv files  [./input-data/]
+        + output_location: location for our output file in parquet  [./output.parquet]
+        + logger_location: location where the log will be created in [./log/]
+        + output_mode: writer mode [overwrite]
+        + logger_level: logger level: info, debug, warning, error [info]
+
