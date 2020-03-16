@@ -1,0 +1,4 @@
+pytest==5.4.1
+pyspark==2.4.5
+pyspark-stubs==2.4.0.post7
+pandas==1.0.1
