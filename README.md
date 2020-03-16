@@ -18,3 +18,4 @@ Assumptions:
   part of our process
   + Schema is fixed, all the csv files will have the same schema, so, we don't 
   need to infer the schema, which will improve performance and reduce prone errors
+  + We are running a spark cluster for our data pipeline

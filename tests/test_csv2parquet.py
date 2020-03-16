@@ -12,9 +12,10 @@ import pytest
 from pyspark.sql.types import Row
 import pandas as pd
 from os.path import join
+import logging
 
 from main.csv2parquet import transform, weather_schema, read_weather_csv, saving_weather_as_parquet
-
+logger = logging.getLogger('test_csv2parquet')
 
 @pytest.mark.usefixtures("spark")
 def test_transform_happy_path(spark):
@@ -55,7 +56,7 @@ def test_transform_happy_path(spark):
                             [datetime(2019, 12, 1, 4, 15, 0),5.8,'Highland & Eilean Siar',2019]]
                             ,columns=['ObservationDate','ScreenTemperature','Region','Year'])
 
-    result = transform( df_test_case).toPandas()
+    result = transform( df_test_case, logger).toPandas()
     assert_frame_equal(result, expected,check_dtype=False)
 
 
@@ -63,7 +64,7 @@ def test_transform_no_dataframe(spark):
     df_test_case = spark.createDataFrame([],weather_schema())
     expected = pd.DataFrame([],columns=['ObservationDate','ScreenTemperature','Region','Year'])
 
-    result = transform(df_test_case).toPandas()
+    result = transform(df_test_case, logger).toPandas()
 
     assert_frame_equal(result, expected, check_dtype=False)
 
@@ -82,7 +83,7 @@ def test_read_weather_csv(spark):
                                         'SiteName','Latitude','Longitude','Region','Country']
                             )
 
-    result = read_weather_csv(spark, './tests/resources/test-input-csv-files/', weather_schema()).toPandas()
+    result = read_weather_csv(spark, './tests/resources/test-input-csv-files/', weather_schema(), logger).toPandas()
 
     assert_frame_equal(result, expected, check_dtype=False)
 
@@ -98,7 +99,7 @@ def test_saving_weather_as_parquet(spark,tmp_dir):
                                                      ScreentTemperature=5.8, Region='Highland & Eilean Siar',Year=2019),
                                                     ])
 
-    saving_weather_as_parquet(test_df_day_temperature,'overwrite',test_output_file)
+    saving_weather_as_parquet(test_df_day_temperature,'overwrite',test_output_file, logger)
 
     # read the result to compare
     result = (spark.read

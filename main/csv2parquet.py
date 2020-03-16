@@ -12,12 +12,9 @@ from pyspark.sql import SparkSession, types, DataFrame
 from pyspark.sql.functions import col, year
 from main.common.GFlagParser import GFlagParser
 from main.common.GFlagLogger import GFlagLogger
+from logging import Logger
 
-args = GFlagParser()
-logger = GFlagLogger(args['logger_location'],'csv2parquet',args['logger_level']).logger
-
-
-def weather_schema():
+def weather_schema()-> types.StructType:
     """
     Schema of the CSV file containing the weather information
     :return: schema of the csv file
@@ -42,7 +39,7 @@ def weather_schema():
     return schema
 
 
-def transform(weather_info: DataFrame) -> DataFrame:
+def transform(weather_info: DataFrame, logger: Logger) -> DataFrame:
     """
      Function to extract from the weather information dataframe
      only the relevant information to get the day, temperature and region
@@ -57,7 +54,7 @@ def transform(weather_info: DataFrame) -> DataFrame:
                      )
 
 
-def read_weather_csv(spark, csv_location, schema ) -> DataFrame:
+def read_weather_csv(spark: SparkSession, csv_location: str, schema: types.StructType, logger: Logger ) -> DataFrame:
     """
     Read the csv with the weather schema and return a data frame
     containing the data
@@ -76,7 +73,7 @@ def read_weather_csv(spark, csv_location, schema ) -> DataFrame:
             )
 
 
-def saving_weather_as_parquet(df_day_temperature:DataFrame , outputmode: str, outputlocation: str):
+def saving_weather_as_parquet(df_day_temperature:DataFrame , outputmode: str, outputlocation: str, logger: Logger):
     """
     Function to save the data frame as parquet
     :param df_day_temperature: dataframe containing the following columns:
@@ -86,7 +83,7 @@ def saving_weather_as_parquet(df_day_temperature:DataFrame , outputmode: str, ou
     :return: None
     """
     # Not exist and we want to create or exist and we are appending
-    logger.info(f'Saving files into {args["output_location"]}')
+    logger.info(f'Saving files into {outputlocation}')
     # Saving as parquet
     (df_day_temperature.write
      .format('parquet')
@@ -97,6 +94,8 @@ def saving_weather_as_parquet(df_day_temperature:DataFrame , outputmode: str, ou
 
 
 if __name__ == "__main__":
+    args = GFlagParser()
+    logger = GFlagLogger(args['logger_location'], 'csv2parquet', args['logger_level']).logger
 
     # Starting Spark
     logger.info('Starting Spark...')
@@ -110,12 +109,12 @@ if __name__ == "__main__":
     logger.info('Spark started')
 
     # Read using the schema, as it is better performance and prevent issues
-    df_weather = read_weather_csv(spark_session, args['csv_location'],weather_schema())
+    df_weather = read_weather_csv(spark_session, args['csv_location'],weather_schema(), logger)
 
-    df_day_temperature = transform(df_weather)
+    df_day_temperature = transform(df_weather,logger)
 
     # Saving as parquet
-    saving_weather_as_parquet(df_day_temperature,args['output_mode'],args['output_location'])
+    saving_weather_as_parquet(df_day_temperature,args['output_mode'],args['output_location'],logger)
 
     spark_session.stop()
 
